@@ -1,0 +1,9 @@
+# instruction https://docs.snowflake.com/en/user-guide/python-connector-install.html#python-packages
+# source https://github.com/snowflakedb/snowflake-connector-python/blob/master/tested_requirements/requirements_38.reqs
+
+# Generated on: Python 3.8.7
+# With snowflake-connector-python version: 2.4.6
+boto3==1.18.7
+botocore==1.21.16
+snowflake-connector-python==2.4.6
+cryptography==3.1.1

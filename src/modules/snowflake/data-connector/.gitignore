@@ -1,0 +1,6 @@
+.DS_Store
+build
+*.code-workspace
+samconfig.toml
+.aws-sam
+.vscode
