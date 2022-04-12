@@ -50,6 +50,9 @@ python migration.py
 Check out the latest code from https://github.com/aws-samples/aws-iot-twinmaker-samples.
 Deploy with cdk from the snowflake module directory as shown in the following.
 ```
+mkdir snowflake-python-and-boto3 && cd snowflake-python-and-boto3
+pip3 install snowflake-connector-python -t python/
+cd ..
 cd cdk && cdk synth && cdk bootstrap aws://unknown-account/us-east-1 && cdk deploy
 ```
 Execute the step function with the following input. (or schedule it in the event rule that is created as part of the cdk deployment
