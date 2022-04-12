@@ -58,20 +58,24 @@ cd cdk && cdk synth && cdk bootstrap aws://unknown-account/us-east-1 && cdk depl
 Execute the step function with the following input. (or schedule it in the event rule that is created as part of the cdk deployment
 ```
 {
+    "secretsName": "sf_conn_params",
     "bucket": "my-tmp-east",
     "entity_prefix": "my-namespace-",
     "prefix": "snowflake/exports",
-    "workspace_id": "snowflake",
+    "workspaceId": "snowflake",
+    "queryFile": "sf_qry.sql",
     "iottwinmaker_role_arn": "arn:aws:iam::00000000000:role/iot-tm-service-role"
 }
 ```
 
 where
 ```
+    secretsName             Name of the secret in secret manager that stores snowflake credentials
     bucket                  The bucket containing exported snowflake models
     entity_prefix           Prefix to namespace entities
     prefix                  The prefix to store exported snowflake assets and models
-    workspace_id            Workspace id that will be created
+    workspaceId             Workspace id that will be created
+    queryFile               File containing the query that will be executed against the snowflake data
     iottwinmaker_role_arn   IAM role that has permissions to create a workspace
 ```
 
