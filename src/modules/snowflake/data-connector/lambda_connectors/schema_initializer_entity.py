@@ -1,3 +1,6 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved. 2021
+# SPDX-License-Identifier: Apache-2.0
+
 import logging
 from utils.connection_utils import connect_snowflake
 
@@ -15,6 +18,11 @@ LOGGER.setLevel(logging.INFO)
 
 # Connect to Snowflake
 SNOWFLAKE_CONNECTION = connect_snowflake()
+
+# ---------------------------------------------------------------------------
+#   Sample implementation of an AWS IoT TwinMaker control plane Connector against Snowflake
+#   queries property schema of a component
+# ---------------------------------------------------------------------------
 
 
 def lambda_handler(event, context):
@@ -44,12 +52,12 @@ def lambda_handler(event, context):
 
             if pt_uom is not None:
                 current_property['definition']['dataType'] = {
-                    'type': map_to_roci_data_type(attr_name, data_type),
+                    'type': map_to_twinmaker_data_type(attr_name, data_type),
                     'unitOfMeasure': pt_uom
                 }
             else:
                 current_property['definition']['dataType'] = {
-                    'type': map_to_roci_data_type(attr_name, data_type)
+                    'type': map_to_twinmaker_data_type(attr_name, data_type)
                 }
         
             if attr_pi_pt is not None:
@@ -88,7 +96,7 @@ def replace_illegal_character(attr_name):
     return attr_name.replace('__', '_')
 
 
-def map_to_roci_data_type(attr_name, data_type):
+def map_to_twinmaker_data_type(attr_name, data_type):
     """
     DATA_TYPE	Type
     -------------------

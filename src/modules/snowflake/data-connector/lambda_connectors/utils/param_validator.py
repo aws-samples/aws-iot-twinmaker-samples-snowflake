@@ -1,9 +1,8 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved. 2021
+# SPDX-License-Identifier: Apache-2.0
+
 from datetime import datetime
 from . import udqw_constants, get_value
-
-
-# TODO make the validator generic
-
 
 class UDQParamsValidator:
 
@@ -25,20 +24,7 @@ class UDQParamsValidator:
         if (len(selected_properties) != 1) or (selected_properties[0] != udqw_constants.FILTER_ALARM_PROPERTY_NAME):
             raise Exception('Unexpected selectedProperties[{}]'.format(selected_properties))
 
-        # validate startDateTime and endDateTime
-        start_date_time = get_value(params, udqw_constants.START_TIME)
-        UDQParamsValidator.validate_timestamp(start_date_time)
-        end_date_time = get_value(params, udqw_constants.END_TIME)
-        UDQParamsValidator.validate_timestamp(end_date_time)
-
     @staticmethod
     def validate_required_field(dict, key):
         if key not in dict:
             raise Exception("Required key[{}] is missing".format(key))
-
-    @staticmethod
-    def validate_timestamp(date_string):
-        try:
-            datetime.fromisoformat(date_string)
-        except:
-            raise Exception("{} is not a valid ISO timestamp string".format(date_string))

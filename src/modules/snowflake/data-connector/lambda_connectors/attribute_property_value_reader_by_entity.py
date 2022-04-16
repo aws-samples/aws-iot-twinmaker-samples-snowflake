@@ -1,3 +1,6 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved. 2021
+# SPDX-License-Identifier: Apache-2.0
+
 import logging
 from utils import udqw_constants
 from utils.connection_utils import connect_snowflake
@@ -18,6 +21,11 @@ LOGGER.setLevel(logging.INFO)
 # Connect to Snowflake
 SNOWFLAKE_CONNECTION = connect_snowflake()
 
+# ---------------------------------------------------------------------------
+#   Sample implementation of an AWS IoT TwinMaker UDQ Connector against Snowflake
+#   queries static values of multiple properties within a single component
+# ---------------------------------------------------------------------------
+
 
 def lambda_handler(event, context):
     """
@@ -25,8 +33,6 @@ def lambda_handler(event, context):
     Each property has single primitive value or list of primitive values.
     The connector will return results with a map containing property name and its value.
     """
-
-    # LOGGER.info('Receiving request: %s', event)
 
     # 1. Parse input parameter
     param_parser = UDQWParamsParser(event)

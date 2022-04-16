@@ -1,6 +1,8 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved. 2021
+# SPDX-License-Identifier: Apache-2.0
+
 from . import udqw_constants, get_value
 from datetime import datetime
-
 
 class UDQWParamsParser:
 

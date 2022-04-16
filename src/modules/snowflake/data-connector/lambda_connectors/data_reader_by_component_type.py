@@ -1,6 +1,9 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved. 2021
+# SPDX-License-Identifier: Apache-2.0
+
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from utils import parse_next_token, udqw_constants
 from utils.connection_utils import connect_snowflake
 from utils.param_parser import UDQWParamsParser
@@ -14,6 +17,10 @@ SNOWFLAKE_CONNECTION = connect_snowflake()
 
 DEFAULT_ALARM_TABLE = 'TEST_ALARMS'
 
+# ---------------------------------------------------------------------------
+#   Sample implementation of an AWS IoT TwinMaker UDQ Connector against Snowflake
+#   queries time-series values of multiple properties shared in the same component type
+# ---------------------------------------------------------------------------
 
 def post_process(dict_values, entity_id=None, component_name=None, selected_properties=None):
     result = {'propertyValues': []}
@@ -132,7 +139,7 @@ def lambda_handler(event, context):
         for (alarm_id, event_time, status) in cursor.execute(query_string, query_params):
             if alarm_id not in values:
                 values[alarm_id] = []
-            current_event = {'time': event_time.isoformat(), 'value': {'stringValue': status}}
+            current_event = {'time': event_time.replace(tzinfo=timezone.utc).isoformat(), 'value': {'stringValue': status}}
             values[alarm_id].append(current_event)
             last_timestamp = current_event['time']
             count += 1

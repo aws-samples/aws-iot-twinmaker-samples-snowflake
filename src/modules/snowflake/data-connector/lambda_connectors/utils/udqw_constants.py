@@ -1,3 +1,6 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved. 2021
+# SPDX-License-Identifier: Apache-2.0
+
 ALARM_KEY = 'alarm_key'
 ATTRIBUTE_PROPERTY_TABLE_NAME = 'attributePropertyTableName'
 COMPONENT_NAME = 'componentName'

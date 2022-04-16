@@ -1,3 +1,6 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved. 2021
+# SPDX-License-Identifier: Apache-2.0
+
 import logging
 from collections import defaultdict
 from datetime import datetime
@@ -8,8 +11,8 @@ from utils.udw_param_validator import UDWParamsValidator
 
 TIMESERIES_TABLE_FIELDNAMES = ['PT_ID', 'PT', 'DESCRIPTION', 'TS', 'UOM', 'DATA_TYPE', 'PT_VALUE',
                                'PT_VALUE_STR', 'PT_STATUS', 'YEAR', 'MONTH', 'DAY']
-INTERNAL_STAGE_NAME = 'roci_batch_write_stage'
-PUT_STAGE_FILE_FORMAT_NAME = 'roci_batch_write_format'
+INTERNAL_STAGE_NAME = 'twinmaker_batch_write_stage'
+PUT_STAGE_FILE_FORMAT_NAME = 'twinmaker_batch_write_format'
 CSV_FILE_PATH_TEMPLATE = '/tmp/batch-entry-{}.csv'
 
 # Configure logger
@@ -18,6 +21,12 @@ LOGGER.setLevel(logging.INFO)
 
 SNOWFLAKE_BULK_LOADER = SnowflakeBulkLoader(CSV_FILE_PATH_TEMPLATE, TIMESERIES_TABLE_FIELDNAMES,
                                             INTERNAL_STAGE_NAME, PUT_STAGE_FILE_FORMAT_NAME)
+
+
+# ---------------------------------------------------------------------------
+#   Sample implementation of an AWS IoT TwinMaker UDW Connector against Snowflake
+#   write time-series values of multiple properties
+# ---------------------------------------------------------------------------
 
 
 def lambda_handler(event, context):

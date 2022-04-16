@@ -1,6 +1,9 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved. 2021
+# SPDX-License-Identifier: Apache-2.0
+
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from utils import parse_next_token
 from utils.connection_utils import connect_snowflake
 from utils.param_parser import UDQWParamsParser
@@ -22,6 +25,10 @@ LOGGER.setLevel(logging.INFO)
 # Connect to Snowflake
 SNOWFLAKE_CONNECTION = connect_snowflake()
 
+# ---------------------------------------------------------------------------
+#   Sample implementation of an AWS IoT TwinMaker UDQ Connector against Snowflake
+#   queries time-series values of multiple properties within a single component
+# ---------------------------------------------------------------------------
 
 def lambda_handler(event, context):
     """
@@ -97,7 +104,7 @@ def lambda_handler(event, context):
                     (property_name, property_foreign_key, property_type, property_query_start_key) = current_page_properties[pt]
                     value_type = get_value_type(property_type)
                     property_values[property_name].append({
-                        'time': timestamp.isoformat(),
+                        'time': timestamp.replace(tzinfo=timezone.utc).isoformat(),
                         'value': {
                             value_type: value
                         }
