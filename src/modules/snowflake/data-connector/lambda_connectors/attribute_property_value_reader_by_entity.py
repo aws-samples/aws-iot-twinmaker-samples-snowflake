@@ -51,11 +51,11 @@ def lambda_handler(event, context):
         property_definitions[property_name] = property_type
 
     # 3. Generate query statement
-    wrapped_properties = ['identifier(\'' + property + '\')' for property in selected_properties]
+    wrapped_properties = ['identifier(?)' for property in selected_properties]
     query_statement = 'select {} from identifier(?) where elem_id = ?'.format(', '.join(wrapped_properties))
-    parameters = [table_name, element_id]
+    parameters = selected_properties + [table_name, element_id]
     LOGGER.info('query statement: %s', query_statement)
-    LOGGER.info('Table: %s, element_id: %s', table_name, element_id)
+    LOGGER.info('parameters: %s, Table: %s, element_id: %s', ', '.join(selected_properties), table_name, element_id)
 
     # 4. Query Snowflake and fetch result
     cursor = SNOWFLAKE_CONNECTION.cursor()
