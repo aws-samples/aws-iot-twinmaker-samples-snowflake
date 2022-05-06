@@ -15,6 +15,7 @@ Globals:
 
 Resources:
 
+  # An AWS SecretManager Secret that keeps the snowflake credential
   SnowflakeSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
@@ -29,6 +30,7 @@ Resources:
   # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
   # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-template-list.html#secrets-manager-get-secret-value-policy
   
+  # schema initializer connector which helps to auto-import property schema
   SnowflakeSchemaInitializer:
     Type: AWS::Serverless::Function
     Properties:
@@ -39,6 +41,7 @@ Resources:
         - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn: !Ref SnowflakeSecret
 
+  # data reader by component type connector which helps to resolve cross-entity queries on time-series properties
   SnowflakeDataReaderByComponentType:
     Type: AWS::Serverless::Function
     Properties:
@@ -49,6 +52,7 @@ Resources:
         - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn: !Ref SnowflakeSecret
 
+  # data reader by entity which helps to resolve single-entity queries on time-series properties
   SnowflakeDataReaderByEntity:
     Type: AWS::Serverless::Function
     Properties:
@@ -59,6 +63,7 @@ Resources:
         - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn: !Ref SnowflakeSecret
 
+  # static property reader which helps to resolve single-entity queries on non-time-series properties
   SnowflakeAttributePropertyDataReaderByEntity:
     Type: AWS::Serverless::Function
     Properties:
@@ -69,6 +74,7 @@ Resources:
         - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn: !Ref SnowflakeSecret
 
+  # data writer which helps to write time-series records into time-series properties
   SnowflakeDataWriter:
     Type: AWS::Serverless::Function
     Properties:
