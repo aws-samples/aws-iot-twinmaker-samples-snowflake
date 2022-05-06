@@ -1,0 +1,106 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved. 2021
+# SPDX-License-Identifier: Apache-2.0
+
+AWSTemplateFormatVersion: '2010-09-09'
+
+# This template is using AWS SAM template
+# Syntax Ref: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification.html.
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Timeout: 60
+    MemorySize: 2048
+    Runtime: python3.8
+
+Resources:
+
+  # An AWS SecretManager Secret that keeps the snowflake credential
+  SnowflakeSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: "SnowflakeSecret"
+      SecretString: "{\"ACCOUNT\":\"FILL_YOUR_INFO\",\"USER\":\"FILL_YOUR_INFO\",\"PASSWORD\":\"FILL_YOUR_INFO\",\"ROLE\":\"FILL_YOUR_INFO\",\"WAREHOUSE\":\"FILL_YOUR_INFO\",\"DATABASE\":\"FILL_YOUR_INFO\",\"SCHEMA\":\"FILL_YOUR_INFO\"}"
+
+  # More info about Function Resource: 
+  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  #
+  # For policies
+  # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-policies
+  # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
+  # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-template-list.html#secrets-manager-get-secret-value-policy
+  
+  # schema initializer connector which helps to auto-import property schema
+  SnowflakeSchemaInitializer:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: "SnowflakeSchemaInitializer"
+      CodeUri: lambda_connectors/
+      Handler: schema_initializer_entity.lambda_handler
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref SnowflakeSecret
+
+  # data reader by component type connector which helps to resolve cross-entity queries on time-series properties
+  SnowflakeDataReaderByComponentType:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: "SnowflakeDataReaderByComponentType"
+      CodeUri: lambda_connectors/
+      Handler: data_reader_by_component_type.lambda_handler
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref SnowflakeSecret
+
+  # data reader by entity which helps to resolve single-entity queries on time-series properties
+  SnowflakeDataReaderByEntity:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: "SnowflakeDataReaderByEntity"
+      CodeUri: lambda_connectors/
+      Handler: data_reader_by_entity.lambda_handler
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref SnowflakeSecret
+
+  # static property reader which helps to resolve single-entity queries on non-time-series properties
+  SnowflakeAttributePropertyDataReaderByEntity:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: "SnowflakeAttributePropertyDataReaderByEntity"
+      CodeUri: lambda_connectors/
+      Handler: attribute_property_value_reader_by_entity.lambda_handler
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref SnowflakeSecret
+
+  # data writer which helps to write time-series records into time-series properties
+  SnowflakeDataWriter:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: "SnowflakeDataWriter"
+      CodeUri: lambda_connectors/
+      Handler: data_writer.lambda_handler
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref SnowflakeSecret
+
+Outputs:
+  SnowflakeSecret:
+    Description: "Snowflake secret ARN"
+    Value: !Ref SnowflakeSecret
+  SnowflakeSchemaInitializer:
+    Description: "SnowflakeSchemaInitializer Function ARN"
+    Value: !GetAtt SnowflakeSchemaInitializer.Arn
+  SnowflakeDataReaderByComponentType:
+    Description: "Snowflake data querier"
+    Value: !GetAtt SnowflakeDataReaderByComponentType.Arn
+  SnowflakeDataReaderByEntity:
+    Description: "SnowflakeDataReaderByEntity Function ARN"
+    Value: !GetAtt SnowflakeDataReaderByEntity.Arn
+  SnowflakeAttributePropertyDataReaderByEntity:
+    Description: "SnowflakeAttributePropertyDataReaderByEntity Function ARN"
+    Value: !GetAtt SnowflakeAttributePropertyDataReaderByEntity.Arn
+  SnowflakeDataWriter:
+    Description: "SnowflakeDataWriter Function ARN"
+    Value: !GetAtt SnowflakeDataWriter.Arn
